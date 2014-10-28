@@ -21,7 +21,7 @@ Example:
     Successfully logged in to:  yourserver2.com
   
 Dependencies:  
-pexpect - http://sourceforge.net/projects/pexpect/
+* pexpect - http://sourceforge.net/projects/pexpect/
 
 
 pupd
