@@ -8,7 +8,7 @@ This repository contains a small collection of python scripts for managing passw
 login-chk
 ---------
 
-Verify account login works on specified hosts.
+Verify an account login works on multiple hosts.  Create a plain text file with each server on a new line that you want to check your login against.
 
 Example:
 
@@ -17,9 +17,10 @@ Example:
     Password:
     Confirm Password:
     Successfully logged in to:  yourserver1.com
-    
     Successfully logged in to:  yourserver2.com
   
+
+
 
 
 
