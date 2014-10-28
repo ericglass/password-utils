@@ -21,7 +21,7 @@ Example:
     Successfully logged in to:  yourserver2.com
   
 Dependencies:  
-pexpect
+pexpect - http://sourceforge.net/projects/pexpect/
 
 
 pupd
@@ -41,7 +41,8 @@ Example:
     Changed password on host:  yourserver2.com
   
 Dependencies:  
-pexpect
+pexpect - http://sourceforge.net/projects/pexpect/
+sudo access required
 
 
 
