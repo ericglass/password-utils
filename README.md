@@ -8,7 +8,8 @@ This repository contains a small collection of python scripts for managing passw
 login-chk
 ---------
 
-Verify an account login works on multiple hosts.  Create a plain text file with each server on a new line that you want to check your login against.
+Verify an account login works on multiple hosts.  
+Create a plain text file with each server on a new line that you want to check your login against.
 
 Example:
 
@@ -19,9 +20,28 @@ Example:
     Successfully logged in to:  yourserver1.com
     Successfully logged in to:  yourserver2.com
   
-Dependencies:
+Dependencies:  
 pexpect
 
+
+pupd
+---------
+
+Change a users password on multiple hosts.  
+Create a plain text file with each server on a new line that you want to change your password.
+
+Example:
+
+    $ pupd servers_test.txt
+    Username: username
+    Current Password:
+    New Password:
+    Confirm New Password:
+    Changed password on host:  yourserver1.com
+    Changed password on host:  yourserver2.com
+  
+Dependencies:  
+pexpect
 
 
 
