@@ -41,7 +41,7 @@ Example:
     Changed password on host:  yourserver2.com
   
 Dependencies:  
-pexpect - http://sourceforge.net/projects/pexpect/
+pexpect - http://sourceforge.net/projects/pexpect/  
 sudo access required
 
 
