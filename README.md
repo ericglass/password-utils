@@ -19,7 +19,8 @@ Example:
     Successfully logged in to:  yourserver1.com
     Successfully logged in to:  yourserver2.com
   
-
+Dependencies:
+pexpect
 
 
 
