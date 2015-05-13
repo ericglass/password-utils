@@ -46,6 +46,28 @@ Dependencies:
 
 
 
+pupd-oth
+---------
+
+Change a different users password on multiple hosts.  
+Create a plain text file with each server on a new line that you want to change your password.
+
+Example:
+
+    $ pupd-oth servers_test.txt
+    Username: username
+    Your Password:
+    Login account being changed:
+    New Password:
+    Confirm New Password:
+    Changed password on host:  yourserver1.com
+    Changed password on host:  yourserver2.com
+  
+Dependencies:  
+* pexpect - http://sourceforge.net/projects/pexpect/  
+* sudo access required
+
+
 Problems
 --------
 
