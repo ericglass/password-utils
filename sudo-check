@@ -1,0 +1,119 @@
+#!/usr/bin/env python
+
+"""Change password for another account on listed hosts ./pupd-oth host1 host2 host3 ..."""
+
+import pexpect
+import sys, getpass, os
+##Added to enable passing a file with servers listed - EG
+import fileinput
+
+USAGE = '''./sudo-check file_containing_hosts'''
+COMMAND_PROMPT = '[$#] '
+TERMINAL_PROMPT = r'Terminal type\?'
+TERMINAL_TYPE = 'xterm'
+SSH_NEWKEY = r'Are you sure you want to continue connecting \(yes/no\)\?'
+
+def login(host, user, password):
+
+    child = pexpect.spawn('ssh -o StrictHostKeyChecking=no -ql %s %s' % (user, host))
+    child.logfile = None
+
+    i = child.expect([pexpect.TIMEOUT, SSH_NEWKEY, '[Pp]assword: ', pexpect.EOF], timeout=25)
+    if i == 0 or i == 3: # Timeout or EOF
+        print 'Error 1: ',
+        return None
+    if i == 1: # SSH does not have the public key. Just accept it.
+        child.sendline('yes')
+        j = child.expect([pexpect.TIMEOUT, '[Pp]assword: '], timeout=25)
+        if j == 0: # Timeout
+            print 'Error 1a: ',
+            return None
+    if i == 2: 
+        child.sendline(password)
+    # Now we should be at the command prompt or being asked for our terminal type
+    i = child.expect(['Permission denied', pexpect.TIMEOUT, 
+                      TERMINAL_PROMPT, COMMAND_PROMPT], timeout=25)
+    if i == 0:
+        print 'Error 2: ',
+        return None
+    if i == 1:
+        child.sendline('echo responsive-p')
+        j = child.expect([pexpect.TIMEOUT, 'responsive-p'], timeout=25)
+        if j == 0:
+            print 'Error 2a: ',
+            return None
+        elif j == 1:
+            return child 
+    if i == 2:
+        child.sendline(TERMINAL_TYPE)
+        j = child.expect([pexpect.TIMEOUT, COMMAND_PROMPT], timeout=25)
+        if j == 0:
+            child.sendline('echo responsive-p')
+            k = child.expect([pexpect.TIMEOUT, 'responsive-p'], timeout=25)
+            if k == 0:
+                print 'Error 2b: ',
+                return None
+            elif k == 1:
+                return child 
+        elif j == 1:
+            return child
+    if i == 3:
+        return child
+
+def become_super(child, user, password):
+    child.sendline('uname -a')
+    i = child.expect(['SunOS', 'Linux'])
+    if i == 0:
+        child.sendline('export PATH=$PATH:/usr/local/bin')  # A few Ogden Solaris hosts (believe sfmp/n6/n9) need the path adjusted before calling sudo
+        child.sendline('sudo -l')
+    elif i == 1:
+        child.sendline('sudo -l')
+
+    j = child.expect([pexpect.TIMEOUT, '[Pp]assword'])
+    if j == 0:
+        return -1
+    elif j == 1:
+        child.sendline(password)
+        child.expect([pexpect.TIMEOUT, COMMAND_PROMPT], timeout=5)
+        if j == 0:
+            child.sendline('echo responsive-p')
+            k = child.expect([pexpect.TIMEOUT, 'responsive-p'], timeout=0)
+            if k == 0:
+                return -1
+##    print child.before
+    return child
+
+def main():
+
+    if len(sys.argv) <= 1:
+        print USAGE
+        return 1
+
+    user = raw_input('Username: ')
+    while 1 == 1:
+        password = getpass.getpass('Password: ')
+        passwordconfirm = getpass.getpass('Confirm Password: ')
+        if password == passwordconfirm:
+            break
+        print 'Passwords do not match.'
+
+##    for host in sys.argv[1:]:
+##Added the ability to pass a file with hosts - EG
+    for host in fileinput.input(sys.argv[1:]):
+##Edit your file if you need to add domain - EG
+        child = login(host, user, password)
+        if child == None:
+            print 'Could not login to host: ', host
+            continue
+        rtnval = become_super(child, user, password)
+        print child.before
+               
+        child.expect([pexpect.TIMEOUT, COMMAND_PROMPT], timeout=0)
+        child.sendline('exit')
+
+
+if __name__ == '__main__':
+    try:
+        main()
+    except pexpect.ExceptionPexpect, e:
+        print str(e)
