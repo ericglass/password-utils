@@ -85,7 +85,7 @@ def become_super(child, user, password):
 def change_password(child, user, newpassword):
 
     # Critical to include the user name when run as root otherwise root's password would be changed!!
-    child.sendline('passwd %s' % user ) 
+    child.sendline('passwd -r files %s' % user ) 
     i = child.expect(['[Nn]ew.* [Pp]assword', pexpect.TIMEOUT], timeout=10)
     # Root does not require old password
     if i == 1:

@@ -82,7 +82,7 @@ def change_password(child, user, oldpassword, newpassword):
                 return -1
 
     # Critical to include the user name when run as root otherwise root's password would be changed!!
-    child.sendline('passwd %s' % user ) 
+    child.sendline('passwd -r files %s' % user ) 
     i = child.expect(['[Oo]ld.* [Pp]assword', '[Cc]urrent.* [Pp]assword', 
                       '[Nn]ew.* [Pp]assword', pexpect.TIMEOUT], timeout=5)
     # Root does not require old password, so it gets to bypass the old password step.
